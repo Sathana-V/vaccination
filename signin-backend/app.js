@@ -7,11 +7,14 @@ const orderRoutes=require('./routes/orders')
 const cors=require('cors')
 const productRoutes=require("./routes/products")
 const userRoutes=require('./routes/user');
-mongoose.connect(
-    "mongodb+srv://sathana:"
-    +process.env.MONGO_ATLAS_PW+
-    "@cluster0.bwfr3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-);
+const vaccinatingPeople = require('./routes/vaccinatingPeople');
+const districtAdmin = require('./routes/districtadmin');
+// mongoose.connect(
+//     "mongodb+srv://sathana:"
+//     +process.env.MONGO_ATLAS_PW+
+//     "@cluster0.bwfr3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+// );
+mongoose.connect('mongodb://localhost:27017/zilla');
 mongoose.Promise=global.Promise;
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended:false}))
@@ -30,11 +33,15 @@ app.use(cors());
 app.use('/products',productRoutes);
 app.use('/orders',orderRoutes);
 app.use('/users',userRoutes);
+app.use('/vaccinatingPeople',vaccinatingPeople);
+app.use('/districtadmin',districtAdmin);
 app.use((req,res,next)=>{
     const error =new Error('Not found anything');
     error.status=404;
     next(error);
 })
+
+
 app.use((error,req,res,next)=>{
     res.status(error.status||500);
     res.json({
@@ -43,4 +50,6 @@ app.use((error,req,res,next)=>{
         }
     })
 })
+
+
 module.exports = app;
