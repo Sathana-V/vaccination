@@ -1,3 +1,4 @@
+
 import  React ,{ useEffect, useState } from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -13,212 +14,56 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import EditCenters from './EditCenters';
+import VaccinationCenterTable from './VaccinationCenterTable';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import axios from 'axios';
 import Select from '@mui/material/Select';
 import { Controller, useForm } from 'react-hook-form';
-export default function CentersList(props) {
-  const [centers,setCenters]=useState([]);
-  
-  const fetchPost = async () => {
-    const response = await axios.get(`http://localhost:4000/centers`)
-     const data = response.data;
-      console.log(data);
-      setCenters(data);
-    };
-    const [open, setOpen] = React.useState(false);
-    const [EditItem, setEditItem] = React.useState([]);
-    const [open2, setOpen2] = React.useState(false);
-    useEffect( ()=>{
-      
-       fetchPost();
+
+
+function EditCenters(props) {
+    const { register,reset, control, handleSubmit,setValue, formState: { errors }, } = useForm();
+    const  updateCenter=  async (data)=>{
+        console.log(`called update http://localhost:4000/centers/`+props.items.id)
+     console.log(data)
+   try
+    {
+        const res= await axios.put(`http://localhost:4000/centers/`+props.items.id,data);
+        console.log(res)
+        props.updated();
+    }
+    catch(error)
+    {
+        console.log(error)
+
+    }
            
-      
-      
-       console.log("centers",centers)
-    },[])
-    const handleClick = ( event,param) => {
-      event.stopPropagation();
-      event.preventDefault();
-      
-      setEditItem(param.row)
-      console.log("values",param.row)
-      setOpen2(true);
-      console.log("clicked",param);
-      console.log("event",event)
-    };
-    const filterTasks=(id)=>{
-      const tasks =centers.filter(center => center.id !== id);
-      return { tasks };
-    }
-    const deleteCenter=(id)=>{
-      console.log(id)
-      axios.delete(`http://localhost:4000/centers/`+id)
-      .then(response=>{
-          console.log(response)
           
-      })
-      .catch(error=>{
-          console.log(error)
-      })
-      
-       setCenters(centers.filter(center => center.id !== id))
-       console.log(centers);
-    }
-  
-  const { register,reset, control, handleSubmit, formState: { errors }, } = useForm();
- 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('xl'));
-  const columns = [
-    {
-      field: 'id',
-      renderCell: (cellValues) => {
-        return (
-          <h1></h1>
-        )}
-    },
-   
-    { field: 'hospitalName', headerName: 'Hospital name', width: 200 },
-    { field: 'hospitalID', headerName: 'Hospital ID', width: 200 },
-    {
-      field: 'type',
-      headerName: 'type',
-      width: 100,
-    },
-   
-    {
-      field: 'address1',
-      headerName: 'Address',
-      width: 300,
-    
-   
-  },
-    {
-      field: 'block',
-      headerName: 'Mobile Number',
-      width: 200,
-    },
-    {
-      field: 'block',
-      headerName: 'Block',
-      width: 200,
-    },
-    {
-      field: 'state',
-      headerName: 'state',
-      width: 200,
-    },
-   
-    {
-      field: 'pincode',
-      headerName: 'pincode',
-      width: 200,
-    },
-    {
-      field: "Actions",
-      headerName:"Actions",
-      width: 100,
-      
-      renderCell: (cellValues) => {
-        return (
-          <div>
-            
-            <IconButton aria-label="delete"   color="success"   onClick={(event) => {
-              handleClick(event,cellValues);
-            }}>
-   < EditIcon></ EditIcon>
-   </IconButton>
-  <IconButton aria-label="delete"    color="primary"  onClick={(event) => {
-              deleteCenter(cellValues.row.id);
-            }}>
-  <DeleteIcon />
-</IconButton>
-    
-          </div>
-
-        );
-      }
-    },
-  ];
-  
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    reset();
-    setOpen(false);
-  };
-  const handleClose2 =  ()=>{
-    
-      fetchPost();
-   
-     setOpen2(false);
-  };
-  const updatedCenters = ()=>{
+       
         
-      fetchPost();
-   
-      setOpen2(false);
-  }
-  const SubmitUser = (data) => {
-    console.log('called')
-    console.log(data)
-    axios.post(`http://localhost:4000/centers`,data)
-        .then(response=>{
-            console.log(response)
-            console.log(response.data.createdcenters)
-            setCenters([...centers,response.data.createdcenters])
-            console.log("cet centes",centers)
-            handleClose();
-        })
-        .catch(error=>{
-            console.log(error)
-        })
-  }
-  const [ptypeSize, setPtypeSize] = React.useState(25);
- 
-  return (
+    }
+    useEffect(()=>{
+        console.log(props.items);
+      
+        setValue("hospitalName", props.items.hospitalName)
+        setValue("address1", props.items.address1)
+        setValue("address2", props.items.address2)
+        setValue("block", props.items.block)
+
+        setValue("hospitalID", props.items.hospitalID)
+        setValue("latitude", props.items.latitude)
+        setValue("district", props.items.district)
+        setValue("longitude", props.items.longitude)
+        setValue("pincode", props.items.pincode)
+        setValue("state", props.items.state)
+        setValue("type", props.items.type)
+    },[])
     
-    <React.Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        ADD VACCINATION CENTER
-      </Button>
-      <div style={{ marginTop: '4%' }}>
-
-
-      <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-         disableSelectionOnClick={true}
-        rows={centers}
-        disableSelectionOnClick
-        columns={columns}
-        ptypeSize={ptypeSize}
-        onPtypeSizeChange={(newPtype) => setPtypeSize(newPtype)}
-        pagination
-        checkboxSelection={false}
-      />
-    </div>
-    </div>
-    <Dialog
-        fullScreen={fullScreen}
-        open={open2}
-        onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <EditCenters items={EditItem} handleClick={handleClose2} updated={updatedCenters}></EditCenters>
-      </Dialog>
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <form id="userform" onSubmit={handleSubmit(SubmitUser)} >
+    return (
+        <React.Fragment>
+             <form id="userform" onSubmit={handleSubmit(updateCenter)} >
           <DialogTitle id="responsive-dialog-title">
             {"VACCINATION CENTER"}
           </DialogTitle>
@@ -322,20 +167,16 @@ export default function CentersList(props) {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button style={{ color: 'green' }} type="submit" autoFocus >
+            <Button style={{ color: 'green' }}  type="submit" autoFocus >
               Save
             </Button>
-            <Button style={{ color: 'red' }} onClick={handleClose} autoFocus>
+            <Button style={{ color: 'red' }} onClick={props.handleClick} autoFocus>
               Cancel
             </Button>
           </DialogActions>
         </form>
-      </Dialog>
-
-    </React.Fragment>
-  );
+        </React.Fragment>
+    );
 }
 
-
-
-
+export default EditCenters;

@@ -87,7 +87,9 @@ router.patch('/:productId',async (request,response,next)=>{
             message:'not updated',
             data:error
         })
-    })   
+    })
+   
+   
 });
 router.delete('/:productId',(request,response,next)=>{
     const id=request.body.productId;
@@ -105,5 +107,6 @@ router.delete('/:productId',(request,response,next)=>{
             message:'un succesfull'
         })
     })
+   
 });
 module.exports = router;

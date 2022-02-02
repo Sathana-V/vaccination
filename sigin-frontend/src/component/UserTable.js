@@ -33,6 +33,21 @@ const columns = [
     width: 200,
   },
   {
+    field: 'role',
+    headerName: 'Role',
+    width: 200,
+  },
+  {
+    field: 'hospitalName',
+    headerName: 'Hospital Name',
+    width: 200,
+  },
+  {
+    field: 'hospitalAddress',
+    headerName: 'hospitalAddress',
+    width: 200,
+  },
+  {
     field: 'fullName',
     headerName: 'Full name',
     description: 'This column has a value getter and is not sortable.',

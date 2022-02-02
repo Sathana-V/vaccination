@@ -1,5 +1,7 @@
-import * as React from 'react';
+
 import { styled, useTheme } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -119,6 +121,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 export default function DepartmentSite() {
+ 
   const theme = useTheme();
  const [auth, setAuth] = React.useState(true);
 const [anchorEl, setAnchorEl] = React.useState(null);
@@ -216,7 +219,7 @@ const [selectedOption, setSelectedOption] = React.useState(0);
         </DrawerHeader>
         <Divider />
         <List>
-            <ListItem>
+            <ListItem button>
               <ListItemIcon>
                  <InboxIcon /> 
               </ListItemIcon>
@@ -225,7 +228,7 @@ const [selectedOption, setSelectedOption] = React.useState(0);
         </List>
         <Divider />
         <List>
-        <ListItem>
+        <ListItem button>
               <ListItemIcon>
                  <InboxIcon /> 
               </ListItemIcon>
@@ -246,7 +249,8 @@ const [selectedOption, setSelectedOption] = React.useState(0);
          </div>
          <div>
         {
-            (selectedOption===1)?<CentersList></CentersList>:''
+         
+            (selectedOption===1)?<CentersList ></CentersList>:''
            
         }
        </div>
