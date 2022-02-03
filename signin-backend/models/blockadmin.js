@@ -3,16 +3,18 @@ const mongoose = require('mongoose');
 const app = express();
 const blockAdminSchema = mongoose.Schema({
     _id:mongoose.Schema.Types.ObjectId,
-    name:String,
+    firstName:String,
+    lastName:String,
     age:Number,
-    mobile:Number,
     address:String,
-    position:String,
-    hospitalname:String,
-    hospitaladdress:String,
-    blockId:String,
+    state:String,
+    city:String,
+    pincode:String,
+    gender:String,
     type:String,
-    role:String
+    role:String,
+    hospitalName:String,
+    hospitalId:String
 })
 
 module.exports = mongoose.model('BlockAdmin',blockAdminSchema);

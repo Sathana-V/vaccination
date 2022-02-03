@@ -9,6 +9,8 @@ const productRoutes=require("./routes/products")
 const userRoutes=require('./routes/user');
 const vaccinatingPeople = require('./routes/vaccinatingPeople');
 const districtAdmin = require('./routes/districtadmin');
+const blockAdmin = require('./routes/blockadmin');
+const center = require('./routes/centers');
 // mongoose.connect(
 //     "mongodb+srv://sathana:"
 //     +process.env.MONGO_ATLAS_PW+
@@ -35,6 +37,8 @@ app.use('/orders',orderRoutes);
 app.use('/users',userRoutes);
 app.use('/vaccinatingPeople',vaccinatingPeople);
 app.use('/districtadmin',districtAdmin);
+app.use('/vaccinecenter',center);
+app.use('/blockadmin',blockAdmin);
 app.use((req,res,next)=>{
     const error =new Error('Not found anything');
     error.status=404;
