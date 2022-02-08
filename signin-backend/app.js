@@ -7,16 +7,16 @@ const orderRoutes=require('./routes/orders')
 const cors=require('cors')
 const productRoutes=require("./routes/products")
 const userRoutes=require('./routes/user');
+const centersRoutes=require('./routes/centers');
 const vaccinatingPeople = require('./routes/vaccinatingPeople');
 const districtAdmin = require('./routes/districtadmin');
 const blockAdmin = require('./routes/blockadmin');
 const center = require('./routes/centers');
-// mongoose.connect(
-//     "mongodb+srv://sathana:"
-//     +process.env.MONGO_ATLAS_PW+
-//     "@cluster0.bwfr3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-// );
-mongoose.connect('mongodb://localhost:27017/zilla');
+mongoose.connect(
+    "mongodb+srv://sathana:"
+    +process.env.MONGO_ATLAS_PW+
+    "@cluster0.bwfr3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+);
 mongoose.Promise=global.Promise;
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended:false}))
@@ -35,6 +35,7 @@ app.use(cors());
 app.use('/products',productRoutes);
 app.use('/orders',orderRoutes);
 app.use('/users',userRoutes);
+app.use('/centers',centersRoutes);
 app.use('/vaccinatingPeople',vaccinatingPeople);
 app.use('/districtadmin',districtAdmin);
 app.use('/vaccinecenter',center);
@@ -44,8 +45,6 @@ app.use((req,res,next)=>{
     error.status=404;
     next(error);
 })
-
-
 app.use((error,req,res,next)=>{
     res.status(error.status||500);
     res.json({
@@ -54,6 +53,4 @@ app.use((error,req,res,next)=>{
         }
     })
 })
-
-
 module.exports = app;

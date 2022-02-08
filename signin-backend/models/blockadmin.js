@@ -10,10 +10,12 @@ const blockAdminSchema = mongoose.Schema({
     state:String,
     city:String,
     pincode:String,
+    phoneNumber:String,
     gender:String,
     type:String,
     role:String,
     hospitalName:String,
+    hospitalAddress:String,
     hospitalId:String
 })
 

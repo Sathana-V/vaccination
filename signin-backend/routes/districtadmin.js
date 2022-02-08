@@ -3,9 +3,6 @@ const app = express();
 const router = express.Router();
 const mongoose = require('mongoose');
 const blockAdminSchema = require('../models/blockadmin');
-const vaccineCentreschema = require('../models/vaccineCentre');
-const userSchema = require('../models/user');
-const center = require('./centers');
 
 
 router.post('/',(req,res,next) => {
