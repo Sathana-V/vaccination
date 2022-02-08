@@ -18,7 +18,7 @@ const columns = [
     width: 300,
   },
   {
-    field: 'mobileno',
+    field: 'phoneNumber',
     headerName: 'Mobile Number',
     width: 200,
   },
@@ -43,8 +43,8 @@ const columns = [
     width: 200,
   },
   {
-    field: 'hospitalAddress',
-    headerName: 'hospitalAddress',
+    field: 'hospitalId',
+    headerName: 'hospitalId',
     width: 200,
   },
   {

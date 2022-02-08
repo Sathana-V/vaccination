@@ -1,214 +1,341 @@
-import * as React from 'react';
+import  React ,{ useEffect, useState } from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import { makeStyles ,createStyles} from '@mui/material/styles';
+import { DataGrid } from '@mui/x-data-grid';
+import EditIcon from '@mui/icons-material/Edit';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import UserTable from './UserTable';
+import EditCenters from './EditCenters';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import {useForm} from 'react-hook-form';
 import axios from 'axios';
-export default function UserListForm() {
-  const {register,handleSubmit,formState:{errors}} =useForm();
- const [open, setOpen] = React.useState(false);
- const [HospitalList, setHospitalList] = React.useState([]);
+import Select from '@mui/material/Select';
+import { Controller, useForm } from 'react-hook-form';
+export default function CentersList(props) {
+  const [centers,setCenters]=useState([]);
+  
+  const fetchPost = async () => {
+    const response = await axios.get(`http://localhost:4000/centers`)
+     const data = response.data;
+      console.log(data);
+      setCenters(data);
+    };
+    const [open, setOpen] = React.useState(false);
+    const [EditItem, setEditItem] = React.useState([]);
+    const [open2, setOpen2] = React.useState(false);
+    useEffect( ()=>{
+      
+       fetchPost();
+           
+      
+      
+       console.log("centers",centers)
+    },[])
+    const handleClick = ( event,param) => {
+      event.stopPropagation();
+      event.preventDefault();
+      
+      setEditItem(param.row)
+      console.log("values",param.row)
+      setOpen2(true);
+      console.log("clicked",param);
+      console.log("event",event)
+    };
+    const filterTasks=(id)=>{
+      const tasks =centers.filter(center => center.id !== id);
+      return { tasks };
+    }
+    const deleteCenter=(id)=>{
+      console.log(id)
+      axios.delete(`http://localhost:4000/centers/`+id)
+      .then(response=>{
+          console.log(response)
+          
+      })
+      .catch(error=>{
+          console.log(error)
+      })
+      
+       setCenters(centers.filter(center => center.id !== id))
+       console.log(centers);
+    }
+  
+  const { register,reset, control, handleSubmit, formState: { errors }, } = useForm();
+ 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('xl'));
-  const [FirstName, setFirstName] = React.useState('');
- const  handleClickOpen=()=>{
-      setOpen(true)
+  const columns = [
+    {
+      field: 'id',
+      renderCell: (cellValues) => {
+        return (
+          <h1></h1>
+        )}
+    },
+   
+    { field: 'hospitalName', headerName: 'Hospital name', width: 200 },
+    { field: 'hospitalID', headerName: 'Hospital ID', width: 200 },
+    {
+      field: 'type',
+      headerName: 'type',
+      width: 100,
+    },
+   
+    {
+      field: 'address1',
+      headerName: 'Address',
+      width: 300,
+    
+   
+  },
+    {
+      field: 'block',
+      headerName: 'Mobile Number',
+      width: 200,
+    },
+    {
+      field: 'block',
+      headerName: 'Block',
+      width: 200,
+    },
+    {
+      field: 'state',
+      headerName: 'state',
+      width: 200,
+    },
+   
+    {
+      field: 'pincode',
+      headerName: 'pincode',
+      width: 200,
+    },
+    {
+      field: "Actions",
+      headerName:"Actions",
+      width: 100,
+      
+      renderCell: (cellValues) => {
+        return (
+          <div>
+            
+            <IconButton aria-label="delete"   color="success"   onClick={(event) => {
+              handleClick(event,cellValues);
+            }}>
+   < EditIcon></ EditIcon>
+   </IconButton>
+  <IconButton aria-label="delete"    color="primary"  onClick={(event) => {
+              deleteCenter(cellValues.row.id);
+            }}>
+  <DeleteIcon />
+</IconButton>
+    
+          </div>
+
+        );
+      }
+    },
+  ];
+  
+  const handleClickOpen = () => {
+    setOpen(true)
   }
-  const changeFirstName = (e) => 
-  {
-    setFirstName(e.target.value);
-  };
-  const [SecondName, setSecondName] = React.useState('');
-  const changeSecondName = (e) => {
-    setSecondName(e.target.value);
-  };
-  const [Address, setAddress] = React.useState('');
-  const changeAddress = (e) => {
-    setAddress(e.target.value);
-  };
-  const [Age, setAge] = React.useState('');
-  const changeAge = (e) => {
-    setAge(e.target.value);
-  };
-  const [HospitalAddress, setHospitalAddress] = React.useState('');
-  const changeHospitalAddress = (e) => {
-    setHospitalAddress(e.target.value);
-  };
-  const [Hospital, setHospital] = React.useState('');
-  const changeHospital = (e) => {
-    setHospital(e.target.value);
-  };
-  const [StateName, setStateName] = React.useState('');
-  const changeStateName = (e) => {
-    setStateName(e.target.value);
-  };
-  const [City, setCity] = React.useState('');
-  const changeCity = (e) => {
-    setCity(e.target.value);
-  };
-  const [Pincode, setPincode] = React.useState('');
-  const changePincode = (e) => {
-    setPincode(e.target.value);
-  };
-  const [Gender, setGender] = React.useState('');
-  const changeGender = (e) => {
-    setGender(e.target.value);
-  };
+
   const handleClose = () => {
+    reset();
     setOpen(false);
   };
-  const SubmitUser=()=>{
-      console.log(FirstName,SecondName)
-      console.log(StateName,City,Pincode,Address)
-      console.log(Age,Gender)
+  const handleClose2 =  ()=>{
+    
+      fetchPost();
+   
+     setOpen2(false);
+  };
+  const updatedCenters = ()=>{
+        
+      fetchPost();
+   
+      setOpen2(false);
   }
-  const [type, setType] = React.useState('');
-  const changeType = (event) => {
-    setType(event.target.value);
-  };
-  const [Role, setRole] = React.useState('');
-  const changeRole = (event) => {
-    setRole(event.target.value);
-  };
-
+  const SubmitUser = (data) => {
+    console.log('called')
+    console.log(data)
+    axios.post(`http://localhost:4000/centers`,data)
+        .then(response=>{
+            console.log(response)
+            console.log(response.data.createdcenters)
+            setCenters([...centers,response.data.createdcenters])
+            console.log("cet centes",centers)
+            handleClose();
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+  }
+  const [ptypeSize, setPtypeSize] = React.useState(25);
+ 
   return (
+    
     <React.Fragment>
       <Button variant="outlined" onClick={handleClickOpen}>
-       ADD USERS
+        ADD VACCINATION CENTER
       </Button>
-      <div style={{marginTop:'4%'}}>
+      <div style={{ marginTop: '4%' }}>
 
-     
-      <UserTable></UserTable> </div>
+
+      <div style={{ height: 400, width: '100%' }}>
+      <DataGrid
+         disableSelectionOnClick={true}
+        rows={centers}
+        disableSelectionOnClick
+        columns={columns}
+        ptypeSize={ptypeSize}
+        onPtypeSizeChange={(newPtype) => setPtypeSize(newPtype)}
+        pagination
+        checkboxSelection={false}
+      />
+    </div>
+    </div>
+    <Dialog
+        fullScreen={fullScreen}
+        open={open2}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <EditCenters items={EditItem} handleClick={handleClose2} updated={updatedCenters}></EditCenters>
+      </Dialog>
       <Dialog
         fullScreen={fullScreen}
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
       >
-          
-        <DialogTitle id="responsive-dialog-title">
-          {"Add Users"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-          <Grid container spacing={4}>
-  <Grid item xl={6}>
-      
-    <TextField fullWidth value={FirstName} {...register("FirstName",{required:"Name id required"})} onChange={changeFirstName} value={FirstName} onChange={changeFirstName} id="First Name" label="First Name" variant="filled" />
-  </Grid>
-  <Grid item xl={6}>
-  <TextField fullWidth value={SecondName} onChange={changeSecondName} id="Second Name" label="Second Name" variant="filled" />
-  </Grid>
-  
-  <Grid item xl={4}>
-  <TextField fullWidth value={Age} onChange={changeAge} id="age" type="number" label="age" variant="filled" />
-  </Grid>
-  <Grid item xl={8}>
-  <TextField error fullWidth value={Address} onChange={changeAddress} id="address" label="Address" variant="filled" />
-  </Grid>
-  <Grid item xl={4}>
-  <TextField fullWidth value={StateName} onChange={changeStateName} id="state"  label="state" variant="filled" />
-  </Grid>
-  <Grid item xl={4}>
-  <TextField fullWidth value={City} onChange={changeCity} id="city"  label="city" variant="filled" />
-  </Grid>
-  <Grid item xl={4}>
-  <TextField fullWidth value={Pincode} onChange={changePincode} id="pincode"  label="pincode" variant="filled" />
-  </Grid>
-  
- 
-  <Grid item xl={4}>
-  <FormControl variant="filled" fullWidth>
-        <InputLabel id="demo-simple-select-standard-label">Gender</InputLabel>
-        <Select
-          labelId="demo-simple-select-standard-label"
-          id="demo-simple-select-standard"
-          value={Gender}
-          onChange={changeGender}
-          label="Gender"
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={'Male'}>Male</MenuItem>
-          <MenuItem value={'Female'}>Female</MenuItem>
-          
-        </Select>
-      </FormControl>
-  </Grid>
-  <Grid item xl={4}>
-  <FormControl variant="filled" fullWidth>
-        <InputLabel id="demo-simple-select-standard-label2">type</InputLabel>
-        <Select
-          labelId="demo-simple-select-standard-label2"
-          id="demo-simple-select-standard2"
-          value={type}
-          onChange={changeType}
-          label="type"
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={'Public'}>Public</MenuItem>
-          <MenuItem value={'Private'}>Private</MenuItem>
-          
-        </Select>
-      </FormControl>
-      </Grid>
-      <Grid item xl={4}>
-  <FormControl variant="filled" fullWidth>
-        <InputLabel id="demo-simple-select-standard-label3">Role</InputLabel>
-        <Select
-          labelId="demo-simple-select-standard-label3"
-          id="demo-simple-select-standard3"
-          value={Role}
-          onChange={changeRole}
-          label="Role"
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={'Vaccinator'}>Vaccinator</MenuItem>
-          <MenuItem value={'Line Workers'}>Line Workers</MenuItem>
-          
-        </Select>
-      </FormControl>
-      </Grid>
-      <Grid item xl={4}>
-  <TextField fullWidth value={Hospital} onChange={changeHospital} id="Hospital" type="number" label="Hospital" variant="filled" />
-  </Grid>
-  <Grid item xl={8}>
-  <TextField fullWidth value={HospitalAddress} onChange={changeHospitalAddress} id="Hospitaladdress" label="HospitalAddress" variant="filled" />
-  </Grid>
-</Grid>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button style={{color:'green'}} autoFocus onClick={SubmitUser}>
-           Save
-          </Button>
-          <Button style={{color:'red'}} onClick={handleClose} autoFocus>
-            Cancel
-          </Button>
-        </DialogActions>
+        <form id="userform" onSubmit={handleSubmit(SubmitUser)} >
+          <DialogTitle id="responsive-dialog-title">
+            {"VACCINATION CENTER"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+
+              <Grid container spacing={4}>
+                <Grid item xl={6}>
+
+                  <TextField fullWidth  {...register("hospitalName", { required: "Name id required" })} 
+                   error={!!errors?.hospitalName}
+                   helpertext={errors?.hospitalName ? errors.hospitalName.message : null}
+                  id="HospitalName" label="HospitalName" variant="filled" />
+                </Grid>
+                <Grid item xl={6}>
+                  <TextField fullWidth
+                    {...register("hospitalID", { required: "hospitalID id required" })}
+                    error={!!errors?.hospitalID}
+                    helpertext={errors?.hospitalID ? errors.hospitalID.message : null}
+                    id="Hospital ID" label="Hospital ID" variant="filled" />
+                </Grid>
+
+                <Grid item xl={4}>
+                <FormControl variant="filled" fullWidth error={Boolean(errors.type)}
+                    helpertext={errors?.type ? errors.type.message : null} >
+                    <InputLabel id="demo-simple-select-standard-label2">Fee Type</InputLabel>
+                    <Controller
+                      render={({ field: { onChange, value } }) => (
+                        <Select onChange={onChange} value={value}>
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          <MenuItem value={'Paid'}>Paid</MenuItem>
+                          <MenuItem value={'Free'}>Free</MenuItem>
+                        </Select>
+                      )}
+                      name="type"
+                      control={control}
+                      defaultValue=""
+                      rules={{
+                        required: 'chose Fee Type'
+                      }}
+                    >
+
+                    </Controller>
+
+                  </FormControl>
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth  {...register("latitude", { required: " required" })}
+                    error={!!errors?.latitude}
+                    helpertext={errors?.latitude ? errors.latitude.message : null}
+                    id="Latitude" label="Latitude" variant="filled" />
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth    {...register("longitude", { required: " required" })}
+                    error={!!errors?.longitude}
+                    helpertext={errors?.longitude ? errors.longitude.message : null}
+                    id="Longitude" label="Longitude" variant="filled" />
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth  {...register("address1", { required: " required" })}
+                    error={!!errors?.address1}
+                    helpertext={errors?.address1 ? errors.address1.message : null}
+                    id="Address1" label="Address 1" variant="filled" />
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth    {...register("address2", { required: " required" })}
+                    error={!!errors?.address2}
+                    helpertext={errors?.address2 ? errors.address2.message : null}
+                    id="Address2" label="Address 2" variant="filled" />
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth   {...register("block", { required: " required" })}
+                    error={!!errors?.block}
+                    helpertext={errors?.block ? errors.block.message : null}
+                    id="Block" label="Block" variant="filled" />
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth  {...register("district", { required: " required" })}
+                    error={!!errors?.district}
+                    helpertext={errors?.district ? errors.district.message : null}
+                    id="District" label="District" variant="filled" />
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth    {...register("state", { required: " required" })}
+                    error={!!errors?.state}
+                    helpertext={errors?.state ? errors.state.message : null}
+                    id="State" label="State" variant="filled" />
+                </Grid>
+                <Grid item xl={4}>
+                  <TextField fullWidth   {...register("pincode", { required: " required" })}
+                    error={!!errors?.pincode}
+                    helpertext={errors?.pincode ? errors.pincode.message : null}
+                    id="pincode" label="pincode" variant="filled" />
+                </Grid>
+
+
+              </Grid>
+
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button style={{ color: 'green' }} type="submit" autoFocus >
+              Save
+            </Button>
+            <Button style={{ color: 'red' }} onClick={handleClose} autoFocus>
+              Cancel
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
-      </React.Fragment>
-    );
+
+    </React.Fragment>
+  );
 }
 
 
 
 
-     
